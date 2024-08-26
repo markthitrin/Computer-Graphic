@@ -5,7 +5,14 @@
       <FullPath>D:\Programming\Computer_Graphics\Practice2\Debug\Practice2.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>D:\Programming\Computer_Graphics\Practice2\Debug\PixelShader.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Programming\Computer_Graphics\Practice2\Debug\VertexShader.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

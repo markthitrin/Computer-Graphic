@@ -49,6 +49,10 @@
     <ClCompile Include="Renderer\AdapterReader.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\Vertex.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Shaders.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\ErrorLogger.h">
@@ -85,8 +89,16 @@
     <ClInclude Include="Renderer\AdapterReader.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Vertex.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Practice2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resource\VertexShader.hlsl" />
+    <FxCompile Include="Resource\PixelShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -141,6 +141,8 @@
     <ClCompile Include="Renderer\Engine.cpp" />
     <ClCompile Include="Renderer\Graphic.cpp" />
     <ClCompile Include="Renderer\RenderWindow.cpp" />
+    <ClCompile Include="Renderer\Shaders.cpp" />
+    <ClCompile Include="Renderer\Vertex.cpp" />
     <ClCompile Include="Renderer\WindowContainer.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Utils\ErrorLogger.cpp" />
@@ -155,6 +157,8 @@
     <ClInclude Include="Renderer\Engine.h" />
     <ClInclude Include="Renderer\Graphic.h" />
     <ClInclude Include="Renderer\RenderWindow.h" />
+    <ClInclude Include="Renderer\Shaders.h" />
+    <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="Renderer\WindowContainer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils\ErrorLogger.h" />
@@ -162,6 +166,22 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Practice2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resource\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Resource\VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
