@@ -137,7 +137,9 @@
     <ClCompile Include="KeyBoard\KeyboardEvent.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
+    <ClCompile Include="Renderer\AdapterReader.cpp" />
     <ClCompile Include="Renderer\Engine.cpp" />
+    <ClCompile Include="Renderer\Graphic.cpp" />
     <ClCompile Include="Renderer\RenderWindow.cpp" />
     <ClCompile Include="Renderer\WindowContainer.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -149,7 +151,9 @@
     <ClInclude Include="KeyBoard\KeyboardEvent.h" />
     <ClInclude Include="Mouse\MouseClass.h" />
     <ClInclude Include="Mouse\MouseEvent.h" />
+    <ClInclude Include="Renderer\AdapterReader.h" />
     <ClInclude Include="Renderer\Engine.h" />
+    <ClInclude Include="Renderer\Graphic.h" />
     <ClInclude Include="Renderer\RenderWindow.h" />
     <ClInclude Include="Renderer\WindowContainer.h" />
     <ClInclude Include="resource.h" />
