@@ -93,6 +93,7 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Shaders.h" />
+    <ClInclude Include="Renderer\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Practice2.rc" />

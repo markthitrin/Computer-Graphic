@@ -159,6 +159,7 @@
     <ClInclude Include="Renderer\RenderWindow.h" />
     <ClInclude Include="Renderer\Shaders.h" />
     <ClInclude Include="Renderer\Vertex.h" />
+    <ClInclude Include="Renderer\VertexBuffer.h" />
     <ClInclude Include="Renderer\WindowContainer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils\ErrorLogger.h" />

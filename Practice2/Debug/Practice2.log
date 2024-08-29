@@ -1,5 +1,9 @@
-﻿  Graphic.cpp
+﻿  Engine.cpp
+  Graphic.cpp
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(209,19): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(210,20): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
   RenderWindow.cpp
+  WindowContainer.cpp
   Source.cpp
   Generating Code...
   Practice2.vcxproj -> D:\Programming\Computer_Graphics\Practice2\Debug\Practice2.exe
