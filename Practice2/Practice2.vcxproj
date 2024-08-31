@@ -138,6 +138,7 @@
     <ClCompile Include="Mouse\MouseClass.cpp" />
     <ClCompile Include="Mouse\MouseEvent.cpp" />
     <ClCompile Include="Renderer\AdapterReader.cpp" />
+    <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\Engine.cpp" />
     <ClCompile Include="Renderer\Graphic.cpp" />
     <ClCompile Include="Renderer\RenderWindow.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Mouse\MouseClass.h" />
     <ClInclude Include="Mouse\MouseEvent.h" />
     <ClInclude Include="Renderer\AdapterReader.h" />
+    <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
     <ClInclude Include="Renderer\ConstantBufferType.h" />
     <ClInclude Include="Renderer\Engine.h" />

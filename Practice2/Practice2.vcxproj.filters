@@ -53,6 +53,7 @@
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Shaders.cpp" />
+    <ClCompile Include="Renderer\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\ErrorLogger.h">
@@ -97,6 +98,7 @@
     <ClInclude Include="Renderer\IndexBuffer.h" />
     <ClInclude Include="Renderer\ConstantBufferType.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
+    <ClInclude Include="Renderer\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Practice2.rc" />

@@ -1,7 +1,10 @@
 #include "Graphic.h"
 
 bool Graphics::Initialize(HWND hwnd, int width, int height) {
-	if (!InitializeDirectX(hwnd, width, height))
+	this->windowWidth = width;
+	this->windowHeight = height;
+	
+	if (!InitializeDirectX(hwnd))
 		return false;
 
 	if (!InitializeShaders())
@@ -54,10 +57,10 @@ bool Graphics::InitializeShaders() {
 bool Graphics::InitializeScene() {
 
 	Vertex v[] = {
-		Vertex(-0.5,-0.5,1.0,0,1),
-		Vertex(-0.5,0.5,1.0,0,0),
-		Vertex(0.5,0.5,1.0,1,0),
-		Vertex(0.5,-0.5,1.0,1,1)
+		Vertex(-0.5,-0.5,0.0,0,1),
+		Vertex(-0.5,0.5,0.0,0,0),
+		Vertex(0.5,0.5,0.0,1,0),
+		Vertex(0.5,-0.5,0.0,1,1)
 	};
 
 	HRESULT hr = this->vertexBuffer.Initialize(this->device.Get(), v, ARRAYSIZE(v));
@@ -89,10 +92,13 @@ bool Graphics::InitializeScene() {
 		return false;
 	}
 
+	camera.SetPosition(0.0, 0.0, -2.0f);
+	camera.SetProjectionValues(90, static_cast<float>(windowWidth) / static_cast<float>(windowHeight), 0.1f, 1000.0f);
+
 	return true;
 }
 
-bool Graphics::InitializeDirectX(HWND hwnd, int width, int height) {
+bool Graphics::InitializeDirectX(HWND hwnd) {
 	std::vector<AdapterData> adapters = AdapterReader::GetAdapters();
 
 	// result Adapter : [0]AMD , [1]NVIDIA3050, [2]Microsoft basic reder driver
@@ -107,8 +113,8 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height) {
 
 	DXGI_SWAP_CHAIN_DESC scd;
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
-	scd.BufferDesc.Width = width;
-	scd.BufferDesc.Height = height;
+	scd.BufferDesc.Width = this->windowWidth;
+	scd.BufferDesc.Height = this->windowHeight;
 	scd.BufferDesc.RefreshRate.Numerator = 60;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -157,8 +163,8 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height) {
 	}
 
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width = width;
-	depthStencilDesc.Height = height;
+	depthStencilDesc.Width = this->windowWidth;
+	depthStencilDesc.Height = this->windowHeight;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -201,8 +207,8 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height) {
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = width;
-	viewport.Height = height;
+	viewport.Width = this->windowWidth;
+	viewport.Height = this->windowHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
@@ -255,8 +261,9 @@ void Graphics::RenderFrame() {
 
 	UINT offset = 0;
 
-
-	constantBuffer.data.mat = DirectX::XMMatrixRotationRollPitchYaw(0, 0, DirectX::XM_PIDIV2);
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	camera.AdjustPosition(0, 0.01, 0);
+	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
 	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
 
 	if (!constantBuffer.ApplyChanges())
