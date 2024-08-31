@@ -60,37 +60,32 @@ bool Graphics::InitializeScene() {
 		Vertex(0.5,-0.5,1.0,1,1)
 	};
 
-	DWORD indices[] = {
-		0,1,2,
-		0,2,3
-	};
-
-
 	HRESULT hr = this->vertexBuffer.Initialize(this->device.Get(), v, ARRAYSIZE(v));
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create vertex buffer.");
 		return false;
 	}
 
-	D3D11_BUFFER_DESC indexBufferDesc;
-	ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * ARRAYSIZE(indices);
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
+	DWORD indices[] = {
+		0,1,2,
+		0,2,3
+	};
 
-	D3D11_SUBRESOURCE_DATA indexBufferData;
-	indexBufferData.pSysMem = indices;
-	hr = this->device->CreateBuffer(&indexBufferDesc, &indexBufferData, this->indicesBuffer.GetAddressOf());
+	hr = this->indicesBuffer.Initialize(this->device.Get(), indices, ARRAYSIZE(indices));
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create indices buffer.");
-		return hr;
+		return false;
 	}
 
 	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t0.png", nullptr, myTexture.GetAddressOf());
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create wic texture from file.");
+		return false;
+	}
+
+	hr = constantBuffer.Initialize(this->device.Get(), this->deviceContext.Get());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, "Failed to initialize constant buffer.");
 		return false;
 	}
 
@@ -246,7 +241,7 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height) {
 }
 
 void Graphics::RenderFrame() {
-	float bgcolor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float bgcolor[] = { 0.05f, 0.05f, 0.05f, 1.0f };
 	this->deviceContext->ClearRenderTargetView(this->renderTargetView.Get(), bgcolor);
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -260,11 +255,19 @@ void Graphics::RenderFrame() {
 
 	UINT offset = 0;
 
+
+	constantBuffer.data.mat = DirectX::XMMatrixRotationRollPitchYaw(0, 0, DirectX::XM_PIDIV2);
+	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
+
+	if (!constantBuffer.ApplyChanges())
+		return;
+	this->deviceContext->VSSetConstantBuffers(0, 1, this->constantBuffer.GetAddressOf());
+
 	this->deviceContext->PSSetShaderResources(0, 1, this->myTexture.GetAddressOf());
 	this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-	this->deviceContext->IASetIndexBuffer(this->indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	this->deviceContext->DrawIndexed(6, 0, 0);
+	this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
 
 	spriteBatch->Begin();
 	spriteFont->DrawString(spriteBatch.get(), L"HELLO WORLD", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0,0.0), DirectX::XMFLOAT2(1.0f, 1.0f));

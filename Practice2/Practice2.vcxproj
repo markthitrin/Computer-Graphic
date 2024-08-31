@@ -154,8 +154,11 @@
     <ClInclude Include="Mouse\MouseClass.h" />
     <ClInclude Include="Mouse\MouseEvent.h" />
     <ClInclude Include="Renderer\AdapterReader.h" />
+    <ClInclude Include="Renderer\ConstantBuffer.h" />
+    <ClInclude Include="Renderer\ConstantBufferType.h" />
     <ClInclude Include="Renderer\Engine.h" />
     <ClInclude Include="Renderer\Graphic.h" />
+    <ClInclude Include="Renderer\IndexBuffer.h" />
     <ClInclude Include="Renderer\RenderWindow.h" />
     <ClInclude Include="Renderer\Shaders.h" />
     <ClInclude Include="Renderer\Vertex.h" />
