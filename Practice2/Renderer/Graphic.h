@@ -7,6 +7,7 @@
 #include "ConstantBufferType.h"
 #include "ConstantBuffer.h";
 #include "Camera.h"
+#include "Timer.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
@@ -15,6 +16,8 @@ class Graphics {
 public:
 	bool Initialize(HWND hwnd, int width, int height);
 	void RenderFrame();
+	Camera camera;
+
 private:
 	bool InitializeDirectX(HWND hwnd);
 	bool InitializeShaders();
@@ -46,6 +49,5 @@ private:
 
 	int windowWidth = 0;
 	int windowHeight = 0;
-
-	Camera camera;
+	Timer fpsTimer;
 };

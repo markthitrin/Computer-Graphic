@@ -3,6 +3,7 @@
 bool Graphics::Initialize(HWND hwnd, int width, int height) {
 	this->windowWidth = width;
 	this->windowHeight = height;
+	this->fpsTimer.Start();
 	
 	if (!InitializeDirectX(hwnd))
 		return false;
@@ -262,7 +263,7 @@ void Graphics::RenderFrame() {
 	UINT offset = 0;
 
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	camera.AdjustPosition(0, 0.01, 0);
+	
 	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
 	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
 
@@ -276,9 +277,17 @@ void Graphics::RenderFrame() {
 
 	this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
 
+	static int fpsCounter = 0;
+	static std::string fpsString = "FPS: 0";
+	fpsCounter++;
+	if (fpsTimer.GetMillisecondElapsed() > 1000.0) {
+		fpsString = "FPS: " + std::to_string(fpsCounter);
+		fpsCounter = 0;
+		fpsTimer.Restart();
+	}
 	spriteBatch->Begin();
-	spriteFont->DrawString(spriteBatch.get(), L"HELLO WORLD", DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0,0.0), DirectX::XMFLOAT2(1.0f, 1.0f));
+	spriteFont->DrawString(spriteBatch.get(), StringConvertor::StringToWide(fpsString).c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0, 0.0), DirectX::XMFLOAT2(1.0f, 1.0f));
 	spriteBatch->End();
 
-	this->swapchain->Present(1, NULL);
+	this->swapchain->Present(0, NULL);
 }

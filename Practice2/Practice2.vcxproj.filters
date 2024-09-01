@@ -54,6 +54,7 @@
     </ClCompile>
     <ClCompile Include="Renderer\Shaders.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
+    <ClCompile Include="Renderer\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utils\ErrorLogger.h">
@@ -99,6 +100,7 @@
     <ClInclude Include="Renderer\ConstantBufferType.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
     <ClInclude Include="Renderer\Camera.h" />
+    <ClInclude Include="Renderer\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Practice2.rc" />

@@ -143,6 +143,7 @@
     <ClCompile Include="Renderer\Graphic.cpp" />
     <ClCompile Include="Renderer\RenderWindow.cpp" />
     <ClCompile Include="Renderer\Shaders.cpp" />
+    <ClCompile Include="Renderer\Timer.cpp" />
     <ClCompile Include="Renderer\Vertex.cpp" />
     <ClCompile Include="Renderer\WindowContainer.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Renderer\IndexBuffer.h" />
     <ClInclude Include="Renderer\RenderWindow.h" />
     <ClInclude Include="Renderer\Shaders.h" />
+    <ClInclude Include="Renderer\Timer.h" />
     <ClInclude Include="Renderer\Vertex.h" />
     <ClInclude Include="Renderer\VertexBuffer.h" />
     <ClInclude Include="Renderer\WindowContainer.h" />
