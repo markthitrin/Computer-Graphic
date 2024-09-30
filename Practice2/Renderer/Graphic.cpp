@@ -65,10 +65,14 @@ bool Graphics::InitializeShaders() {
 bool Graphics::InitializeScene() {
 
 	Vertex v[] = {
-		Vertex(-0.5,-0.5,0.0,0,1),
-		Vertex(-0.5,0.5,0.0,0,0),
-		Vertex(0.5,0.5,0.0,1,0),
-		Vertex(0.5,-0.5,0.0,1,1)
+		Vertex(-0.5,-0.5,-0.5,0,1),
+		Vertex(-0.5,0.5,-0.5,0,0),
+		Vertex(0.5,0.5,-0.5,1,0),
+		Vertex(0.5,-0.5,-0.5,1,1),
+		Vertex(-0.5,-0.5,0.5,0,1),
+		Vertex(-0.5,0.5,0.5,0,0),
+		Vertex(0.5,0.5,0.5,1,0),
+		Vertex(0.5,-0.5,0.5,1,1),
 	};
 
 	HRESULT hr = this->vertexBuffer.Initialize(this->device.Get(), v, ARRAYSIZE(v));
@@ -79,7 +83,17 @@ bool Graphics::InitializeScene() {
 
 	DWORD indices[] = {
 		0,1,2,
-		0,2,3
+		0,2,3,
+		4,7,6,
+		4,6,5,
+		3,2,6,
+		3,6,7,
+		4,5,1,
+		4,1,0,
+		1,5,6,
+		1,6,2,
+		0,3,7,
+		0,7,4,
 	};
 
 	hr = this->indicesBuffer.Initialize(this->device.Get(), indices, ARRAYSIZE(indices));
@@ -88,7 +102,7 @@ bool Graphics::InitializeScene() {
 		return false;
 	}
 
-	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t0.png", nullptr, profileTexture.GetAddressOf());
+	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t2.png", nullptr, profileTexture.GetAddressOf());
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create wic texture from file.");
 		return false;
@@ -239,8 +253,19 @@ bool Graphics::InitializeDirectX(HWND hwnd) {
 	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
 
 	rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
+	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 	hr = this->device->CreateRasterizerState(&rasterizerDesc, this->rasterizerState.GetAddressOf());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, "Failed to create rasterizer state.");
+		return false;
+	}
+
+	D3D11_RASTERIZER_DESC rasterizerDesc_CullFront;
+	ZeroMemory(&rasterizerDesc_CullFront, sizeof(D3D11_RASTERIZER_DESC));
+
+	rasterizerDesc_CullFront.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	rasterizerDesc_CullFront.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+	hr = this->device->CreateRasterizerState(&rasterizerDesc_CullFront, this->rasterizerState_CullFront.GetAddressOf());
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create rasterizer state.");
 		return false;
@@ -291,7 +316,7 @@ bool Graphics::InitializeDirectX(HWND hwnd) {
 }
 
 void Graphics::RenderFrame() {
-	float bgcolor[] = { 0.05f, 0.05f, 0.05f, 1.0f };
+	float bgcolor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	this->deviceContext->ClearRenderTargetView(this->renderTargetView.Get(), bgcolor);
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -306,50 +331,27 @@ void Graphics::RenderFrame() {
 
 	UINT offset = 0;
 
-	{ // profile picture
-		static float translationOffset[3] = { 0, 0,0 };
-		DirectX::XMMATRIX world = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f) * DirectX::XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
-		cb_vs_vertexshader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-		cb_vs_vertexshader.data.mat = DirectX::XMMatrixTranspose(cb_vs_vertexshader.data.mat);
+	static float translationOffset[3] = { 0, 0,0 };
+	DirectX::XMMATRIX world = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f) * DirectX::XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+	cb_vs_vertexshader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+	cb_vs_vertexshader.data.mat = DirectX::XMMatrixTranspose(cb_vs_vertexshader.data.mat);
 
-		if (!cb_vs_vertexshader.ApplyChanges())
-			return;
-		this->deviceContext->VSSetConstantBuffers(0, 1, this->cb_vs_vertexshader.GetAddressOf());
+	if (!cb_vs_vertexshader.ApplyChanges())
+		return;
+	this->deviceContext->VSSetConstantBuffers(0, 1, this->cb_vs_vertexshader.GetAddressOf());
 
-		static float alpha = 1.0f;
-		this->cb_ps_pixelshader.data.alpha = alpha;
-		this->cb_ps_pixelshader.ApplyChanges();
-		this->deviceContext->PSSetConstantBuffers(0, 1, this->cb_ps_pixelshader.GetAddressOf());
+	static float alpha = 1.0f;
+	this->cb_ps_pixelshader.data.alpha = alpha;
+	this->cb_ps_pixelshader.ApplyChanges();
+	this->deviceContext->PSSetConstantBuffers(0, 1, this->cb_ps_pixelshader.GetAddressOf());
 
-		this->deviceContext->PSSetShaderResources(0, 1, this->profileTexture.GetAddressOf());
-		this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-		this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-		this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
-	}
-
-	static float alpha = 0.1f;
-	static float translationOffset[3] = { 0, 0, -1.0};
-	{ // mirror profile picture
-		
-		DirectX::XMMATRIX world = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f) * DirectX::XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
-		cb_vs_vertexshader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-		cb_vs_vertexshader.data.mat = DirectX::XMMatrixTranspose(cb_vs_vertexshader.data.mat);
-
-		if (!cb_vs_vertexshader.ApplyChanges())
-			return;
-		this->deviceContext->VSSetConstantBuffers(0, 1, this->cb_vs_vertexshader.GetAddressOf());
-
-		this->cb_ps_pixelshader.data.alpha = alpha;
-		this->cb_ps_pixelshader.ApplyChanges();
-		this->deviceContext->PSSetConstantBuffers(0, 1, this->cb_ps_pixelshader.GetAddressOf());
-
-		this->deviceContext->PSSetShaderResources(0, 1, this->mirrorProfileTexture.GetAddressOf());
-		this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-		this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-		this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
-	}
+	this->deviceContext->PSSetShaderResources(0, 1, this->profileTexture.GetAddressOf());
+	this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+	this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	this->deviceContext->RSSetState(this->rasterizerState_CullFront.Get());
+	this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
+	this->deviceContext->RSSetState(this->rasterizerState.Get());
+	this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
 
 	static int fpsCounter = 0;
 	static std::string fpsString = "FPS: 0";
