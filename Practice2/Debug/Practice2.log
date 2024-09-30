@@ -2,6 +2,8 @@
 D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.h(8,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
   (compiling source file 'Renderer/Graphic.cpp')
   
-D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(211,23): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
-D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(212,24): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(231,23): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(232,24): warning C4244: '=': conversion from 'int' to 'FLOAT', possible loss of data
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(379,58): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer\Graphic.cpp(380,37): warning C4305: 'argument': truncation from 'double' to 'float'
   Practice2.vcxproj -> D:\Programming\Computer_Graphics\Practice2\Debug\Practice2.exe

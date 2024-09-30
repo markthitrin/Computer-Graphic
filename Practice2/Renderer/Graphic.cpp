@@ -14,6 +14,13 @@ bool Graphics::Initialize(HWND hwnd, int width, int height) {
 	if (!InitializeScene())
 		return false;
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui_ImplWin32_Init(hwnd);
+	ImGui_ImplDX11_Init(this->device.Get(), this->deviceContext.Get());
+	ImGui::StyleColorsDark();
+
 	return true;
 }
 
@@ -81,13 +88,26 @@ bool Graphics::InitializeScene() {
 		return false;
 	}
 
-	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t0.png", nullptr, myTexture.GetAddressOf());
+	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t0.png", nullptr, profileTexture.GetAddressOf());
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to create wic texture from file.");
 		return false;
 	}
 
-	hr = constantBuffer.Initialize(this->device.Get(), this->deviceContext.Get());
+	hr = DirectX::CreateWICTextureFromFile(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Texture/t1.png", nullptr, mirrorProfileTexture.GetAddressOf());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, "Failed to create wic texture from file.");
+		return false;
+	}
+
+
+	hr = cb_vs_vertexshader.Initialize(this->device.Get(), this->deviceContext.Get());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, "Failed to initialize constant buffer.");
+		return false;
+	}
+
+	hr = cb_ps_pixelshader.Initialize(this->device.Get(), this->deviceContext.Get());
 	if (FAILED(hr)) {
 		ErrorLogger::Log(hr, "Failed to initialize constant buffer.");
 		return false;
@@ -226,6 +246,29 @@ bool Graphics::InitializeDirectX(HWND hwnd) {
 		return false;
 	}
 
+	D3D11_BLEND_DESC blendDesc;
+	ZeroMemory(&blendDesc, sizeof(blendDesc));
+
+	D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+	ZeroMemory(&rtbd, sizeof(rtbd));
+
+	rtbd.BlendEnable = true;
+	rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+	rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+	rtbd.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	rtbd.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+	rtbd.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+	rtbd.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+	rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	blendDesc.RenderTarget[0] = rtbd;
+
+	hr = this->device->CreateBlendState(&blendDesc, this->blendState.GetAddressOf());
+	if (FAILED(hr)) {
+		ErrorLogger::Log(hr, "Failed to create blend state.");
+		return false;
+	}
+
 	spriteBatch = std::make_unique<DirectX::SpriteBatch>(this->deviceContext.Get());
 	spriteFont = std::make_unique<DirectX::SpriteFont>(this->device.Get(), L"D:/Programming/Computer_Graphics/Practice2/Practice2/Data/Fonts/comic_sans_ms_16.spritefont");
 
@@ -256,26 +299,57 @@ void Graphics::RenderFrame() {
 	this->deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->deviceContext->RSSetState(this->rasterizerState.Get());
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState.Get(), 0);
+	this->deviceContext->OMSetBlendState(this->blendState.Get(), NULL, 0xFFFFFFFF);
 	this->deviceContext->PSSetSamplers(0, 1, this->samplerState.GetAddressOf());
 	this->deviceContext->VSSetShader(vertexshader.GetShader(), NULL, 0);
 	this->deviceContext->PSSetShader(pixelshader.GetShader(), NULL, 0);
 
 	UINT offset = 0;
 
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	
-	constantBuffer.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
-	constantBuffer.data.mat = DirectX::XMMatrixTranspose(constantBuffer.data.mat);
+	{ // profile picture
+		static float translationOffset[3] = { 0, 0,0 };
+		DirectX::XMMATRIX world = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f) * DirectX::XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+		cb_vs_vertexshader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+		cb_vs_vertexshader.data.mat = DirectX::XMMatrixTranspose(cb_vs_vertexshader.data.mat);
 
-	if (!constantBuffer.ApplyChanges())
-		return;
-	this->deviceContext->VSSetConstantBuffers(0, 1, this->constantBuffer.GetAddressOf());
+		if (!cb_vs_vertexshader.ApplyChanges())
+			return;
+		this->deviceContext->VSSetConstantBuffers(0, 1, this->cb_vs_vertexshader.GetAddressOf());
 
-	this->deviceContext->PSSetShaderResources(0, 1, this->myTexture.GetAddressOf());
-	this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
-	this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		static float alpha = 1.0f;
+		this->cb_ps_pixelshader.data.alpha = alpha;
+		this->cb_ps_pixelshader.ApplyChanges();
+		this->deviceContext->PSSetConstantBuffers(0, 1, this->cb_ps_pixelshader.GetAddressOf());
 
-	this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
+		this->deviceContext->PSSetShaderResources(0, 1, this->profileTexture.GetAddressOf());
+		this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+		this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+		this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
+	}
+
+	static float alpha = 0.1f;
+	static float translationOffset[3] = { 0, 0, -1.0};
+	{ // mirror profile picture
+		
+		DirectX::XMMATRIX world = DirectX::XMMatrixScaling(5.0f, 5.0f, 5.0f) * DirectX::XMMatrixTranslation(translationOffset[0], translationOffset[1], translationOffset[2]);
+		cb_vs_vertexshader.data.mat = world * camera.GetViewMatrix() * camera.GetProjectionMatrix();
+		cb_vs_vertexshader.data.mat = DirectX::XMMatrixTranspose(cb_vs_vertexshader.data.mat);
+
+		if (!cb_vs_vertexshader.ApplyChanges())
+			return;
+		this->deviceContext->VSSetConstantBuffers(0, 1, this->cb_vs_vertexshader.GetAddressOf());
+
+		this->cb_ps_pixelshader.data.alpha = alpha;
+		this->cb_ps_pixelshader.ApplyChanges();
+		this->deviceContext->PSSetConstantBuffers(0, 1, this->cb_ps_pixelshader.GetAddressOf());
+
+		this->deviceContext->PSSetShaderResources(0, 1, this->mirrorProfileTexture.GetAddressOf());
+		this->deviceContext->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), vertexBuffer.StridePtr(), &offset);
+		this->deviceContext->IASetIndexBuffer(indicesBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+		this->deviceContext->DrawIndexed(indicesBuffer.BufferSize(), 0, 0);
+	}
 
 	static int fpsCounter = 0;
 	static std::string fpsString = "FPS: 0";
@@ -288,6 +362,26 @@ void Graphics::RenderFrame() {
 	spriteBatch->Begin();
 	spriteFont->DrawString(spriteBatch.get(), StringConvertor::StringToWide(fpsString).c_str(), DirectX::XMFLOAT2(0, 0), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0, 0.0), DirectX::XMFLOAT2(1.0f, 1.0f));
 	spriteBatch->End();
+
+	static int counter = 0;
+
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+	ImGui::Begin("Test");
+
+	ImGui::Text("Hello world");
+	if (ImGui::Button("Click me"))
+		counter++;
+	ImGui::SameLine();
+	std::string clickCount = "Click : " + std::to_string(counter);
+	ImGui::Text(clickCount.c_str());
+	ImGui::DragFloat3("Translation XYZ", translationOffset, 0.1, -5.0, 5.0);
+	ImGui::DragFloat("Alpha ", &alpha, 0.01, 0, 1);
+
+	ImGui::End();
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	this->swapchain->Present(0, NULL);
 }

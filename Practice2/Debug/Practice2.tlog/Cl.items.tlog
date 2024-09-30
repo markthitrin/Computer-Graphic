@@ -1,3 +1,9 @@
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui.obj
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui_draw.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui_draw.obj
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui_impl_dx11.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui_impl_dx11.obj
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui_impl_win32.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui_impl_win32.obj
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui_tables.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui_tables.obj
+D:\Programming\Computer_Graphics\Practice2\Practice2\imgui\imgui_widgets.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\imgui_widgets.obj
 D:\Programming\Computer_Graphics\Practice2\Practice2\KeyBoard\KeyboardClass.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\KeyboardClass.obj
 D:\Programming\Computer_Graphics\Practice2\Practice2\KeyBoard\KeyboardEvent.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\KeyboardEvent.obj
 D:\Programming\Computer_Graphics\Practice2\Practice2\Mouse\MouseClass.cpp;D:\Programming\Computer_Graphics\Practice2\Practice2\Debug\MouseClass.obj

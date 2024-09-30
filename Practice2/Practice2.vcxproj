@@ -76,7 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Programming\Library\Else\DirectXTK\Inc;D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer;D:\Programming\Computer_Graphics\Practice2\Practice2\Utils;D:\Programming\Computer_Graphics\Practice2\Practice2\KeyBoard;D:\Programming\Computer_Graphics\Practice2\Practice2\Mouse</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Programming\Library\Else\DirectXTK\Inc;D:\Programming\Computer_Graphics\Practice2\Practice2\Renderer;D:\Programming\Computer_Graphics\Practice2\Practice2\Utils;D:\Programming\Computer_Graphics\Practice2\Practice2\KeyBoard;D:\Programming\Computer_Graphics\Practice2\Practice2\Mouse;D:\Programming\Computer_Graphics\Practice2\Practice2\imgui</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +133,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="KeyBoard\KeyboardClass.cpp" />
     <ClCompile Include="KeyBoard\KeyboardEvent.cpp" />
     <ClCompile Include="Mouse\MouseClass.cpp" />
@@ -151,6 +157,14 @@
     <ClCompile Include="Utils\StringConvertor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="imgui\imgui_impl_win32.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="KeyBoard\KeyboardClass.h" />
     <ClInclude Include="KeyBoard\KeyboardEvent.h" />
     <ClInclude Include="Mouse\MouseClass.h" />
